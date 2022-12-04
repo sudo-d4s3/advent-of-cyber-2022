@@ -84,3 +84,35 @@ The next step askes what the file name is: `config.php`
 The next step wants to know the name of the QA server: Searching the config file we find it is `qa.santagift.shop`
 
 The final step asks what password is used for the QA and PROD server: Searching the config file we can find that the password is reused `S@nta2022`
+
+## Day 4
+
+This challenge is all about scanning. It want's you to use nmap but I think nmap would be overkill for these challenges.
+
+The first step is to find the name of the webserver running on the provided box:
+
+    nc <ip> 80
+    
+Using this command we can grab the banner of the webserver which tells us it's an `Apache` server.
+
+The next question askes what service runs on port 22. This is usually `ssh`
+
+The next question askes you to find the flag in the smb share. The first step is to enumerate the smb share: 
+
+    smbclient -L \\\\<IP>
+    
+This shows 2 non default shares: "sambashare" and "admins"
+
+    smbclient \\\\10.10.47.241\\admins -U ubuntu%S@nta2022
+    
+Checking the admins share using the credentials we found in yesterday's challenge and we get 2 files: "flag.txt" and "userlist.txt"
+
+    more flag.txt
+    
+Using this command in the smb shell will give us the contents of the file: `{THM_SANTA_SMB_SERVER}`
+
+The next question askes what the password is for the user "santahr":
+    
+    more userlist.txt
+    
+With this command we can dump the contents of the file and find the password for "santahr" is: `santa25`
