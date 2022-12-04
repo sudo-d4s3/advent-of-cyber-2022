@@ -60,3 +60,27 @@ The final part is to find a flag in the standard THM{} format. Chekhov's gun tel
     cat SSHD.log | grep THM
     
 And sure enough it is the onlything to come back: `THM{STOLENSANTASLIST}`
+
+## Day 3
+
+This challenge is all about OSINT
+
+The first step is to identify the Registrar for "santagift.shop":
+
+    whois santagift.shop
+    
+This command will give you the registrar but you have to massage the output to the format TryHackMe wants: `Namecheap Inc`
+
+The next step is to find the site's source code and find some creds in a file:
+The essay before the challenges talkes about google dorking but you don't actually have to dork to find this repo 
+
+    searching "github santagift.shop" will bring up https://github.com/muhammadthm/SantaGiftShop
+    
+Since we are looking for creds pulling up config.php is a good place to start. <br>
+In this file we can see usernames, passwords, and the flag `{THM_OSINT_WORKS}`
+
+The next step askes what the file name is: `config.php`
+
+The next step wants to know the name of the QA server: Searching the config file we find it is `qa.santagift.shop`
+
+The final step asks what password is used for the QA and PROD server: Searching the config file we can find that the password is reused `S@nta2022`
