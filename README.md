@@ -116,3 +116,21 @@ The next question askes what the password is for the user "santahr":
     more userlist.txt
     
 With this command we can dump the contents of the file and find the password for "santahr" is: `santa25`
+
+## Day 5
+
+This one is all about bruteforcing.
+
+The first question want's us to find the vnc password. Since we can see how many characters the password is we can process the rockyou wordlist to only have passwords that have 8 characters.
+
+    grep -E "^.{8}$" rockyou.txt | sort > rockyou-8char.txt 
+    
+This oneliner uses regex to select the beginning of the line eight of any character and the end of the line. It then sorts it and puts it in a new file
+
+We can then use that new wordlist in hydra to automate the bruteforcing
+    
+    hydra -P rockyou-8char.txt vnc://<IP> -V -f
+    
+This gives us the password `1q2w3e4r`
+
+The last question wants us to grab the flag on the desktop of the remote box. Theres nothing fancy here you just login using the password and the wallpaper has `THM{I_SEE_YOUR_SCREEN}`
