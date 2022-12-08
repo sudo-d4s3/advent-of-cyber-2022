@@ -186,3 +186,20 @@ This is a long one-liner that is doing quite a bit. I used `wc -l Urgent\:.eml` 
 The next question wants us to input the hash into virus total, navigate to the behaviour section and find the second tactic marked in the Mitre ATT&CK section. Nothing fancy here just copy/paste and the answer is `Defense Evasion`
 
 The final question wants us to navigate to InQuest, input the hash, and find the subcatagory for the file. `macro_hunter` 
+
+
+## Day 7
+
+This challenge is about using cyberchef. Unfortunatly this is **only** about using cyberchef all the questions about analyzing the maldoc are centered around cyberchef so I can't using any commandline magic.
+
+The first question is what is the version of cyberchef on the vm. `9.49.0`
+
+The next question asks how many recipies it requires to extract urls from the maldoc. This question is one of the reasons I don't like challenges that contrain you to doing something a certian way. I was able to find the url's with 8 recipies, technically 7 since the last one only highlights what I need, but the answer is `10`. My recipie was this:
+
+    Strings -> Find/Replace \[\_\] -> Drop bytes 124 -> From Base64 -> Decode Text UTF-16LE -> Find / Replace ['()+"`] -> Find / Replace b2H_s https -> Regex Url
+
+The next question asks what the file name for the malware that gets downloaded is. In the first url we can see it ends with `mysterygift.exe`
+
+The next question askes what the last defanged url for the bandityet domain is. After adding the defang recipie we can see it is `hxxps[://]cdn[.]bandityeti[.]THM/files/index/`
+
+The last question asks what the golden ticket domain is. The question actually lies to you about the format. It states the format is "Domain/<GOLDEN_FLAG>" so in my mind it should be "secretSanta.THM/Goldenticket/THM_MYSTERY_FLAG" this has both the domain and the subdirectories but the actual answer is just the subdirectory `THM_MYSTERY_FLAG` without a domain.
