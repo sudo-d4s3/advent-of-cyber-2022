@@ -24,11 +24,11 @@ Finally it takes you to a third puzzle where the answer is stage 3 of the Unifie
 
 The second challenge wants to get you familiar with log parsing.
 
-### The first step is to ssh into the box provided.
+The first step is to ssh into the box provided.
 
-### The first challenge is to find how many log files there are in the home directory: `2`                            
-### The second challenge is to identify the webserver logfile: `webserver.log`
-### The Third challenge is to identify the day santa's naught and nice list were stolen:
+The first challenge is to find how many log files there are in the home directory: `2`                            
+The second challenge is to identify the webserver logfile: `webserver.log`
+The Third challenge is to identify the day santa's naught and nice list were stolen:
 
 At first I cat'd the file to see what format I was working with. It looks like a standard webserver log file.
     
@@ -134,3 +134,55 @@ We can then use that new wordlist in hydra to automate the bruteforcing
 This gives us the password `1q2w3e4r`
 
 The last question wants us to grab the flag on the desktop of the remote box. Theres nothing fancy here you just login using the password and the wallpaper has `THM{I_SEE_YOUR_SCREEN}`
+
+## Day 6
+
+This challenge is about email parsing. I'm not a fan of this challenge because it forces you to use their vdi instead of just giving you the file to analyze. Their vdi doesn't passthrough ctrl sequences which makes it difficult to use the terminal so I ended up exfiltrating the file to my own machine using netcat.
+
+The first question asks what who the sender of the email is.
+
+    cat Urgent\:.eml | grep -i from
+    
+This gives us `chief.elf@santaclaus.htm`
+
+The next question asks what the return address is.
+
+    cat Urgent\:.eml | grep -i return-path
+   
+This gives us `murphy.evident@bandityeti.thm`
+
+The next question asks on who's behalf the email was sent. This was answered with the first command: `Chief Elf`
+
+The next question asks what the x-spam score is.
+
+    cat Urgent\:.eml | grep -i spam
+    
+Which gives us `3`
+
+The next question asks what the message-id is.
+
+    cat Urgent\:.eml | grep -i message-id
+
+Which gives us: `QW9DMjAyMl9FbWFpbF9BbmFseXNpcw==` which converts to `AoC2022_Email_Analysis`
+
+The next question wants to know, using the service provided, what the sender's email reputation is. Thankfully this site is curl-able:
+
+    curl emailrep.io/chief.elf@santaclaus.htm
+
+While this would give us all the info we would need in the real world the challenge wants a single word that is only found on the website through a browser with a js engine, something curl doesn't have. The answer is `Risky`
+
+The next question wants to know what the name of the attachement is.
+    
+    cat Urgent\:.eml | grep -i x-attached
+    
+Which gives us `Division_of_labour-Load_share_plan.doc`
+
+The next question wants to know what the hash of the attachment is. It doesn't specify what algorithm to use but in the story text it talks about sha256 so thats what I'm going to use.
+
+    cat Urgent\:.eml | grep -i content-disposition -A 1058 | head -n -1 | tail -n +3 | sed -e 's/^M//g' | base64 -d > out.doc && sha256sum out.doc
+
+This is a long one-liner that is doing quite a bit. I used `wc -l Urgent\:.eml` before this one liner to see how many lines were in the file. I then cat the file, grep for "content-disposition" and extend that to the max line count, this gives the attachment base64 encoded plus some encapsulation text. It then gets piped to head which in this context removes the last line then gets piped to tail which in this context removes the first 2 lines. I then remove all breaklines using sed. It should be noted `^M` is not literal, so you can't directly copy/paste this command, its my terminal's ascii representation of a breakline. You can get this by pressing ctrl+v and then enter in your terminal to get this. It then gets decoded and since .doc is a binary file, as opposed to .docx which is an xml based textfile although nowadays it's zipped by default, the output needs to be redirected to a file since outputting a binary file can messup your terminal. I then use && instead of & since the former will wait for the previous command to be done. This gives us `0827bb9a2e7c0628b82256759f0f888ca1abd6a2d903acdb8e44aca6a1a03467`
+
+The next question wants us to input the hash into virus total, navigate to the behaviour section and find the second tactic marked in the Mitre ATT&CK section. Nothing fancy here just copy/paste and the answer is `Defense Evasion`
+
+The final question wants us to navigate to InQuest, input the hash, and find the subcatagory for the file. `macro_hunter` 
