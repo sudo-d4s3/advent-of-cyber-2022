@@ -203,3 +203,10 @@ The next question asks what the file name for the malware that gets downloaded i
 The next question askes what the last defanged url for the bandityet domain is. After adding the defang recipie we can see it is `hxxps[://]cdn[.]bandityeti[.]THM/files/index/`
 
 The last question asks what the golden ticket domain is. The question actually lies to you about the format. It states the format is "Domain/<GOLDEN_FLAG>" so in my mind it should be "secretSanta.THM/Goldenticket/THM_MYSTERY_FLAG" this has both the domain and the subdirectories but the actual answer is just the subdirectory `THM_MYSTERY_FLAG` without a domain.
+
+# Day 8
+
+This challenge is all about smart contract hacking.
+
+There's really nothing to walk through here all you do is compile the script given then run it in the IDE provided and you get `flag{411_ur_37h_15_m1n3}`<br>
+Honestly this was kind of a let down and it seems a large portion of the players agree.
